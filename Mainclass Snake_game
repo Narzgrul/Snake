@@ -1,0 +1,101 @@
+Boolean game_stopped = true;
+Boolean eaten = true;
+Boolean bitten = false;
+int score = 0;
+Boolean startedOnce = false;
+Boolean check = true;
+
+void setup()
+{
+  size(400, 400);
+  firstSnake.Snake_first();
+  firstTarget.generate(this);
+  background(255, 255, 255);
+  fill(0, 0, 0);
+  textAlign(CENTER, CENTER);
+  text("press \"s\" to start", width/2, height/2);
+  text("you can pause the game by pressing \"s\"", width/2, height/2+20);
+  text("press \"q\" to quit", width/2, height/2 +40);
+}
+Snake firstSnake = new Snake(width/2, height/2, 10, 8, 4);
+Target firstTarget = new Target(6, 6);
+
+void draw()
+{
+  if (this.game_stopped == false && this.bitten == false)
+  {
+    if (check == true)
+    {
+    firstSnake.bitten(this);
+    }
+    check = true;
+    background(255, 255, 255);
+    firstTarget.eaten(this, firstSnake.xPos_head, firstSnake.yPos_head, firstSnake.last_direct, firstSnake.parts_width, firstSnake.parts_height);
+    if (eaten == true)
+    {
+      println("eaten");
+      score++;
+      firstTarget.generate(this);
+      firstSnake.snake_grow();
+      check = false;
+    }
+    text("Score:", 20, 20);
+    textAlign(LEFT);
+    text(score, 20+textWidth("Score:"), 20);
+    firstSnake.drawSnake(this);
+    firstSnake.move(this);
+    firstTarget.drawTarget(this);
+  } else if (this.bitten == true)
+  {
+    background(255, 255, 255);
+    gameover();
+  } else if (this.game_stopped == true && startedOnce == true)
+  {
+    background(255, 255, 255);
+    textAlign(CENTER, CENTER);
+    text("press \"s\" to continue", width/2, height/2);
+    text("press \"q\" to quit", width/2, height/2 +20);
+  }
+}
+
+void keyPressed()
+{
+  if (key == 's' && startedOnce == false)
+  {
+    startedOnce = true;
+  }
+  if ((key =='a'))
+  {
+    this.bitten = true;
+  }
+  firstSnake.keyPressedSnake(this);
+  if ((key == 's' || key == 'S') && game_stopped == true && bitten == true)
+  {
+    game_stopped = false;
+    bitten = false;
+    this.score = 0;
+  } else if ((key =='s' || key == 'S') && game_stopped == false)
+  {
+    game_stopped = true;
+  } else if ((key == 's' || key == 'S') && game_stopped == true)
+  {
+    game_stopped = false;
+  }
+  if (key == 'q' && game_stopped == true )
+  {
+    exit();
+  }
+}
+
+void gameover()
+{
+  textAlign(CENTER, CENTER);
+  text("game over", width/2, height/2);
+  text("your score was:", width/2, height/2+20);
+  text(score, width/2, height/2+40);
+  text("press \"s\" to play again", width/2, height/2+60);
+  text("press \"q\" to quit", width/2, height/2+80);
+  firstSnake = new Snake(200, 200, 10, 8, 4);
+  firstSnake.Snake_first();
+  firstTarget.generate(this);
+}
